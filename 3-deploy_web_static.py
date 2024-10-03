@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# creates and distributes an archive to a web server.
+# Fabfile to create and distribute an archive to a web server.
 import os.path
 from datetime import datetime
 from fabric.api import env
@@ -7,11 +7,11 @@ from fabric.api import local
 from fabric.api import put
 from fabric.api import run
 
+env.hosts = ["104.196.168.90", "35.196.46.172"]
 
 
-env.hosts = ['18.209.49.232', '54.89.11.80']
 def do_pack():
-    """ creates gzipped archive of the directory web_static """
+    """Create a tar gzipped archive of the directory web_static."""
     dt = datetime.utcnow()
     file = "versions/web_static_{}{}{}{}{}{}.tgz".format(dt.year,
                                                          dt.month,
@@ -28,13 +28,13 @@ def do_pack():
 
 
 def do_deploy(archive_path):
-    """
-        Function to distribute archive to a web server
-        Args:
-        archive_path (str): path to the archive to be distributed
-        Return:
-        False - if the file at the path archive_path doesn't exist
-        True - otherwise
+    """Distributes an archive to a web server.
+
+    Args:
+        archive_path (str): The path of the archive to distribute.
+    Returns:
+        If the file doesn't exist at archive_path or an error occurs - False.
+        Otherwise - True.
     """
     if os.path.isfile(archive_path) is False:
         return False
@@ -69,7 +69,7 @@ def do_deploy(archive_path):
 
 
 def deploy():
-    """ creates and redistribute an archive to web server """
+    """Create and distribute an archive to a web server."""
     file = do_pack()
     if file is None:
         return False
