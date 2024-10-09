@@ -1,34 +1,27 @@
 #!/usr/bin/python3
-"""State Module for HBNB project."""
+""" State Module for HBNB project """
+import os
+
 from models.base_model import BaseModel, Base
-from models.city import City
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
+from models.city import City
 import models
 
 
 class State(BaseModel, Base):
-    """State class."""
+    """ State class """
+    __tablename__ = 'states'
 
-    __tablename__ = "states"
     name = Column(String(128), nullable=False)
-    # if DBStorage is used, the relationship between State and City will be
-    # defined as state.cities and city.state
-    # if FileStorage is used, the relationship between State and City will be
-    # defined as state.cities and city.state_id
-    if models.storage_type == "db":
-        cities = relationship("City", backref="state", cascade="all, delete")
-    else:
-        @property
-        def cities(self):
-            """Getter attribute in case of file storage."""
-            cities = models.storage.all(City)
-            return [city for city in cities.values()
-                    if city.state_id == self.id]
 
-    def __init__(self, *args, **kwargs):
-        """Init method."""
-        filtered_kwargs = {k: v for k, v in kwargs.items()
-                           if hasattr(self, k) or k == "id"}
-        super().__init__(*args, **filtered_kwargs)
-        self.name = kwargs.get("name", None)
+    if os.getenv("HBNB_TYPE_STORAGE") == "db":
+        cities = relationship('City', backref='state',
+                              cascade='all, delete-orphan')
+
+    else:
+        def cities(self):
+            """ Returns the list of City instances with state_id
+            equals to the current State.id. """
+            return [city for city in models.storage.all(City).values()
+                    if city.state_id == self.id]
