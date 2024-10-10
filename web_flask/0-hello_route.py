@@ -1,14 +1,16 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
+""" Web application listening on 0.0.0.0, port 5000 """
 from flask import Flask
 
-# Create a Flask application instance
 app = Flask(__name__)
 
-# Define a route for '/' that displays "Hello HBNB!"
-@app.route('/', strict_slashes=False)
+
+@app.route("/")
 def hello_hbnb():
+    """ Display Hello HBNB! """
     return "Hello HBNB!"
 
-# Run the application only if this script is executed directly
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+    app.url_map.strict_slashes = False
